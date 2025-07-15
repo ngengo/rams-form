@@ -1,10 +1,10 @@
-# Use official PHP image
+# Use official PHP image with FPM
 FROM php:8.2-fpm
 
 # Set working directory
 WORKDIR /var/www
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -15,24 +15,22 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     libzip-dev \
-    npm \
     && docker-php-ext-install pdo pdo_pgsql zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy app files
+# Copy application source
 COPY . .
 
-# Install Laravel dependencies
+# Install Laravel PHP dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Install Vite assets
-RUN npm install && npm run build
+# Generate Laravel application key
+RUN php artisan key:generate
 
-# Generate app key & migrate the database
-RUN php artisan key:generate && php artisan migrate --force
-
-# Expose port and start Laravel
+# Expose Laravel's internal server port
 EXPOSE 8000
-CMD php artisan serve --host=0.0.0.0 --port=8000
+
+# Start Laravel and run migration at runtime
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
