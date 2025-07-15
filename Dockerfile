@@ -20,17 +20,20 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application source
+# Copy app files
 COPY . .
 
-# Install Laravel PHP dependencies
+# Add this line for Render secret file
+COPY /etc/secrets/.env .env
+
+# Install Laravel dependencies
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Generate Laravel application key
+# Generate Laravel key
 RUN php artisan key:generate
 
-# Expose Laravel's internal server port
+# Expose port
 EXPOSE 8000
 
-# Start Laravel and run migration at runtime
+# Run migration and start server
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
