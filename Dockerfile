@@ -30,6 +30,9 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Install Vite assets
 RUN npm install && npm run build
 
-# Expose port and start php
+# Generate app key & migrate the database
+RUN php artisan key:generate && php artisan migrate --force
+
+# Expose port and start Laravel
 EXPOSE 8000
 CMD php artisan serve --host=0.0.0.0 --port=8000

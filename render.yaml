@@ -5,6 +5,11 @@ services:
     plan: free
     branch: main
     dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    preDeployCommand: |
+      php artisan config:clear
+      php artisan cache:clear
+      php artisan migrate --force
     envVars:
       - key: APP_ENV
         value: production
