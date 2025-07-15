@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('rams_form', function (Blueprint $table) {
+        Schema::table('rams_forms', function (Blueprint $table) {
             $table->string('status')->default('PENDING');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('rams_form', function (Blueprint $table) {
+        Schema::table('rams_forms', function (Blueprint $table) {
             $table->dropColumn('status');
         });
     }
